@@ -1,5 +1,5 @@
 import robot from 'robotjs';
-import { WebSocket } from 'ws';
+import DuplexWsStream from '../utils/send-stream';
 
 class MouseActions {
   private get x(): number {
@@ -26,13 +26,10 @@ class MouseActions {
     robot.moveMouse(this.x + Number(params[1]), this.y);
   }
 
-  public handleMousePosition(socket: WebSocket, params: string[]): void {
+  public handleMousePosition(stream: DuplexWsStream, params: string[]): void {
     const dataToSend = `${params[0]} ${this.x},${this.y}`;
-    console.log(dataToSend);
 
-    socket.send(dataToSend, (err) => {
-      if (err) console.error(err);
-    });
+    stream.push(dataToSend);
   }
 }
 

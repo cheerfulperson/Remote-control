@@ -16,7 +16,9 @@
     "class-methods-use-this": "off",
     "no-restricted-syntax": "off",
     "@typescript-eslint/indent": "off",
-    "no-case-declarations": "off"
+    "no-case-declarations": "off",
+    "implicit-arrow-linebreak": "off",
+    "no-underscore-dangle": "off"
   },
   "env": {
     "es6": true,

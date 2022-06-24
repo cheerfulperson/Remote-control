@@ -1,6 +1,7 @@
 import { WebSocketServer } from 'ws';
 import MessageHandler from './modules/message-handler';
 import { httpServer } from './http_server/index';
+import DuplexWsStream from './utils/send-stream';
 
 const HTTP_PORT = 3000;
 const WSS_PORT = 8080;
@@ -16,7 +17,10 @@ const wss = new WebSocketServer(
 );
 
 wss.on('connection', (socket) => {
-  socket.on('message', (data) => msgHandler.handle(socket, data.toString()));
+  const duplexWsStream = new DuplexWsStream(socket);
+  duplexWsStream.launch((data) => {
+    msgHandler.handle(duplexWsStream, data.toString());
+  });
 });
 
 wss.on('close', () => {

@@ -1,9 +1,9 @@
 import robot from 'robotjs';
 import Jimp from 'jimp';
-import { WebSocket } from 'ws';
+import DuplexWsStream from '../utils/send-stream';
 
 class ScreenActions {
-  public sendScreen(socket: WebSocket, msg: string): void {
+  public sendScreen(stream: DuplexWsStream, msg: string): void {
     const { x, y } = robot.getMousePos();
     const bitImage: robot.Bitmap = robot.screen.capture(
       x + 100,
@@ -19,7 +19,7 @@ class ScreenActions {
       .getBase64Async(Jimp.MIME_PNG)
       .then((base64: string) => {
         const data = `${msg} ${base64.split('base64,')[1]}`;
-        socket.send(data);
+        stream.push(data);
       });
   }
 }

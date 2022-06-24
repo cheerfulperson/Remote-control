@@ -1,5 +1,5 @@
-import { WebSocket } from 'ws';
 import { MsgDrowingTypes, MsgMouseTypes } from '../utils/msg-types';
+import DuplexWsStream from '../utils/send-stream';
 import DrawActions from './draw-actions';
 import MouseActions from './mouse-actions';
 import ScreenActions from './screen-actions';
@@ -11,40 +11,39 @@ class MessageHandler {
 
   private screenActions = new ScreenActions();
 
-  public handle(socket: WebSocket, msg: string): void {
+  public handle(stream: DuplexWsStream, msg: string): void {
     const params = msg.split(' ');
-    console.log('', msg);
-    this.handleMouseTypes(socket, params, msg);
-    this.handleDrawingTypes(socket, params, msg);
+    this.handleMouseTypes(stream, params, msg);
+    this.handleDrawingTypes(stream, params, msg);
     if (msg === 'prnt_scrn') {
-      this.screenActions.sendScreen(socket, msg);
+      this.screenActions.sendScreen(stream, msg);
     }
   }
 
   private handleMouseTypes(
-    socket: WebSocket,
+    stream: DuplexWsStream,
     params: string[],
     msg: string,
   ): void {
     switch (params[0]) {
       case MsgMouseTypes.MouseUp:
         this.mouseActions.handleMouseUp(params);
-        socket.send(msg);
+        stream.push(msg);
         break;
       case MsgMouseTypes.MouseDown:
         this.mouseActions.handleMouseDown(params);
-        socket.send(msg);
+        stream.push(msg);
         break;
       case MsgMouseTypes.MouseLeft:
         this.mouseActions.handleMouseLeft(params);
-        socket.send(msg);
+        stream.push(msg);
         break;
       case MsgMouseTypes.MouseRight:
         this.mouseActions.handleMouseRight(params);
-        socket.send(msg);
+        stream.push(msg);
         break;
       case MsgMouseTypes.MousePosition:
-        this.mouseActions.handleMousePosition(socket, params);
+        this.mouseActions.handleMousePosition(stream, params);
         break;
       default:
         break;
@@ -52,22 +51,22 @@ class MessageHandler {
   }
 
   private handleDrawingTypes(
-    socket: WebSocket,
+    stream: DuplexWsStream,
     params: string[],
     msg: string,
   ): void {
     switch (params[0]) {
       case MsgDrowingTypes.DrawSircle:
         this.drawActions.drawCircle(params);
-        socket.send(msg);
+        stream.push(msg);
         break;
       case MsgDrowingTypes.DrawRectangle:
         this.drawActions.drawRectangle(params);
-        socket.send(msg);
+        stream.push(msg);
         break;
       case MsgDrowingTypes.DrawSquare:
         this.drawActions.drawSquare(params);
-        socket.send(msg);
+        stream.push(msg);
         break;
       default:
         break;

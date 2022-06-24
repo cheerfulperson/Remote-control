@@ -20,7 +20,7 @@ class DrawActions {
       const y = Math.round(y0 - radius * Math.sin(radian));
       angle += 1;
       robot.mouseClick();
-      robot.dragMouse(x, y);
+      robot.moveMouseSmooth(x, y, 1);
       draw();
     };
     draw();
