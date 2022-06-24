@@ -2,17 +2,23 @@ import { WebSocket } from 'ws';
 import { MsgDrowingTypes, MsgMouseTypes } from '../utils/msg-types';
 import DrawActions from './draw-actions';
 import MouseActions from './mouse-actions';
+import ScreenActions from './screen-actions';
 
 class MessageHandler {
   private mouseActions = new MouseActions();
 
   private drawActions = new DrawActions();
 
+  private screenActions = new ScreenActions();
+
   public handle(socket: WebSocket, msg: string): void {
     const params = msg.split(' ');
     console.log('', msg);
     this.handleMouseTypes(socket, params, msg);
     this.handleDrawingTypes(socket, params, msg);
+    if (msg === 'prnt_scrn') {
+      this.screenActions.sendScreen(socket, msg);
+    }
   }
 
   private handleMouseTypes(
